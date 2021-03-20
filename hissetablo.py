@@ -2,6 +2,8 @@ import requests
 from bs4 import BeautifulSoup
 import time
 import random
+from datetime import date
+import csv
 
 # User-agent tanımlıyorum. Scraping yaparken beni browser sansın diye.
 user_agent_list = ['Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.192 Safari/537.36',
@@ -12,9 +14,22 @@ user_agent_list = ['Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/5
 
 sembol_liste = ["AMZN", "GOOG", "FB", "NFLX", "AAPL", "MSFT"]
 
+today = str(date.today())+".csv"
+
+# boş satırdan kurtulmak için - newline
+# https://stackoverflow.com/questions/3348460/csv-file-written-with-python-has-blank-lines-between-each-row
+
+csv_file = open(today, "w", newline='')
+csv_writer = csv.writer(csv_file)
+csv_writer.writerow(['Stock Name', 'Current Price', 'Previous Close',
+                     'Open', 'Bid', 'Ask', "Day's Range", '52 Week Range',
+                     'Volume', 'Avg. Volume'])
+
 for sembol in sembol_liste:
 
-    user_agent = random.choice(user_agent_list) #her defasında farklı user agent ile scraping yapıyorum.
+    stock = []
+
+    user_agent = random.choice(user_agent_list)
     agent_header = {'User-Agent': user_agent}
 
     hisse_url = "https://finance.yahoo.com/quote/"+sembol+"?p="+sembol+"&.tsrc=fin-srch"
@@ -45,6 +60,9 @@ for sembol in sembol_liste:
     print(hisse_title + " - " + hisse_fiyat)
     print('-------------------------')
 
+    stock.append(str(hisse_title))
+    stock.append(float(hisse_fiyat.replace(',', '')))
+
     table_info = soup.find('div', class_="D(ib) W(1/2) Bxz(bb) Pend(12px) Va(t) ie-7_D(i) smartphone_D(b) "
                                          "smartphone_W(100%) smartphone_Pend(0px) smartphone_BdY "
                                          "smartphone_Bdc($seperatorColor)")
@@ -59,9 +77,12 @@ for sembol in sembol_liste:
         satir_deger = satirlar[1].get_text()
 
         print(satir_baslik + ": " + satir_deger)
+        stock.append(satir_deger)
+    csv_writer.writerow(stock)
     print('********************************')
     # 5 saniye ya da belirli bir süre bekletmezsek,
     # scraping yapan bot olduğumuzu anlayıp bloklayabilirler.
-    time.sleep(5)
+    # time.sleep(1)
 
+csv_file.close()
 print('---END OF LIST---')

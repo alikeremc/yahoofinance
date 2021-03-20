@@ -14,6 +14,8 @@ fiyat= bilgi_bar[1].get_text()
 
 print(fiyat)
 
+print(fiyat.replace(".","").replace(" TL",""))
+
 bosluk_yeri=fiyat.find(' ')
 
 raw_fiyat = fiyat[:bosluk_yeri]
