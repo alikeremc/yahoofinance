@@ -1,4 +1,4 @@
-# Döviz.com'dan en çok kazandıran 6 hisse senedini çektim. hisse senedi listesi excel dosyasına çekilecek.
+# Döviz.com'dan en çok kazandıran 6 hisse senedini çektim. Hisse senedi listesini excel dosyasına aktardım.
 
 import openpyxl
 import requests
@@ -32,14 +32,15 @@ for i in range(1,7):
 
     print("----------------------------------------------")
 
-for b in range(2,7):
+for b in range(1,7):
     bilgi_bar3 = soup.find_all('div', class_='table')[0].find_all('tr')[b].find_all('td')
     for m in range(0,4):
-        sheet.cell(row=2, column=m+1).value = bilgi_bar3[b].get_text().strip()
-        sheet.cell(row=3, column=m + 1).value = bilgi_bar3[m].get_text().strip()
-        sheet.cell(row=4, column=m + 1).value = bilgi_bar3[m].get_text().strip()
-        sheet.cell(row=5, column=m + 1).value = bilgi_bar3[m].get_text().strip()
-        sheet.cell(row=6, column=m + 1).value = bilgi_bar3[m].get_text().strip()
+        sheet.cell(row=b+1, column=m+1).value = bilgi_bar3[m].get_text().strip()
 
-    # Worknook Kaydet
+
+
+column_number = 1
+column = str(chr(64 + column_number))
+sheet.column_dimensions[column].width = 30
+
 WorkBook1.save('/Users/ali/Desktop/dovizcom.xlsx')
